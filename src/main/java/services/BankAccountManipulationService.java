@@ -26,7 +26,7 @@ public class BankAccountManipulationService {
             throw new RuntimeException("You cannot exchange amount which equals 0 or is negative number!");
         Account source = getAccount(accountManipulationDTO.getSourceAccountId());
         if (source.getAmount() < accountManipulationDTO.getAmount())
-            throw new RuntimeException("Not enough founds!");
+            throw new RuntimeException("Not enough funds!");
         Account destination = getAccount(accountManipulationDTO.getDestinationAccountId());
         if (source.getUserId() != destination.getUserId())
             throw new RuntimeException("Currency exchange is possible only between accounts belonging to the same user!");
@@ -40,9 +40,9 @@ public class BankAccountManipulationService {
         if (source.getUserId() == destination.getUserId())
             throw new RuntimeException("Illegal cash transfer");
         if (source.getCurrency() != destination.getCurrency())
-            throw new RuntimeException("You are trying to account with different currency!");
+            throw new RuntimeException("You are trying to transfer to account with different currency!");
         if (source.getAmount() < accountManipulationDTO.getAmount())
-            throw new RuntimeException("Not enough founds!");
+            throw new RuntimeException("Not enough funds!");
         AccountsAmountChangeDTO amountChangeDTO = calculateCashTransfer(accountManipulationDTO, source, destination);
         updateAccountsAndCreateHistory(source, destination, amountChangeDTO, TransactionHistoryType.CASH_TRANSFER);
     }
@@ -50,6 +50,8 @@ public class BankAccountManipulationService {
     public void depositCash(DepositOrCashOutDTO depositCashDTO) {
         Account account = getAccount(depositCashDTO.getAccountId());
         var amountChange = depositCashDTO.getAmount();
+        if (amountChange <= 0)
+            throw new RuntimeException("You cannot deposit negative amount of money!");
         var updatedAmount = account.getAmount() + amountChange;
         account.setAmount(updatedAmount);
         accountDAO.update(account);
@@ -59,10 +61,12 @@ public class BankAccountManipulationService {
 
     public void cashOut(DepositOrCashOutDTO cashOutDTO) {
         Account account = getAccount(cashOutDTO.getAccountId());
+        if (cashOutDTO.getAmount() <= 0)
+            throw new RuntimeException("You cannot cash out negative amount!");
         var amountChange = -cashOutDTO.getAmount();
         var updatedAmount = account.getAmount() + amountChange;
-        if (updatedAmount < 0)
-            throw new RuntimeException("You cannot cash out this amount of money!");
+        if (updatedAmount <= 0)
+            throw new RuntimeException("You cannot cash out this amount!");
         account.setAmount(updatedAmount);
         accountDAO.update(account);
         TransactionHistory transactionHistory = getTransaction(account, amountChange, TransactionHistoryType.CASH_OUT);

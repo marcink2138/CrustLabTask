@@ -59,9 +59,9 @@ public class AppTest {
         userService.createUser(secondUserName);
         User firstUser = userService.getUser(firstUserName);
         User secondUser = userService.getUser(secondUserName);
-        boolean expression = firstUser.getName().equals(firstUserName) && secondUser.getName().equals(secondUserName)
+        boolean areUsersCreatedCorrectly = firstUser.getName().equals(firstUserName) && secondUser.getName().equals(secondUserName)
                 && firstUser.getId() != 0 && secondUser.getId() != 0;
-        assertTrue(expression);
+        assertTrue(areUsersCreatedCorrectly);
         firstUserId = firstUser.getId();
         secondUserId = secondUser.getId();
     }
@@ -71,8 +71,8 @@ public class AppTest {
     void checkDefaultAccounts() {
         firstUserAccountList = accountService.getUserAccounts(firstUserId);
         secondUserAccountList = accountService.getUserAccounts(secondUserId);
-        boolean expression = firstUserAccountList.size() == 3 && secondUserAccountList.size() == 3;
-        assertTrue(expression);
+        boolean areDefaultAccountsCreated = firstUserAccountList.size() == 3 && secondUserAccountList.size() == 3;
+        assertTrue(areDefaultAccountsCreated);
     }
 
     @Test
@@ -155,7 +155,6 @@ public class AppTest {
         assertTrue(isFilteredTransactionHistoryCorrect);
     }
 
-    @AfterAll
     @BeforeAll
     static void cleanTables() {
         Connection conn = DatabaseManager.getConnection();

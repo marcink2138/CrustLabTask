@@ -11,9 +11,11 @@ public class CurrencyExchangeRates {
     private static final double USD_EUR;
     private static final double USD_PLN;
 
+    private static final String CSV_PATH = "src/main/resources/CurrencyExchangeRates.csv";
+
     static {
         CSVReader currencyRatesReader = new CurrencyRatesReader();
-        String[] rates = currencyRatesReader.readCSV("src/main/resources/CurrencyExchangeRates.csv");
+        String[] rates = currencyRatesReader.readCSV(CSV_PATH);
         PLN_USD = Double.parseDouble(rates[0]);
         PLN_EUR = Double.parseDouble(rates[1]);
         EUR_PLN = Double.parseDouble(rates[2]);
